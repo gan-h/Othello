@@ -70,7 +70,7 @@ Day 10:
 - added hint button
 
 Day 11: 
-- Figured out how to compile without using eclipse like a big boy. 
+- Figured out how to compile without using eclipse.
 Day 11: 
 - Updated image paths so that we can compile the program without the images breaking.
 
