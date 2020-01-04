@@ -2,9 +2,6 @@ package project;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
@@ -16,11 +13,11 @@ public class Display extends JPanel implements ActionListener {
 	private static int empty = 0;
 	private static int white = 1;
 	private static int black = 2;
-	public Display() {                 //Constructor overlays a button over every square in the grid.
+	public Display() {        //Constructor overlays a button over every square in the grid.
+		boardstate = new Board();
 		current_player = white;
 		setLayout(null);
 		setBounds(0,0,487,487);
-		boardstate = new Board();
 		buttons = new JButton[8][8];
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 8; x ++) {
@@ -39,9 +36,9 @@ public class Display extends JPanel implements ActionListener {
 					buttons[y][x].setBounds(x * 60 , y * 60 + 0, 60, 60);
 					this.add(buttons[y][x]);
 				}
-				 buttons[y][x].setActionCommand((y * 8 + x) + ""); //Unique ID tag for each square for event handling
-				 buttons[y][x].addActionListener(this); //When button is clicked, pass on event to an object of this class.
-				 buttons[y][x].setOpaque(false);
+				 buttons[y][x].setActionCommand((y * 8 + x) + ""); //Create unique ID tag for each square for event handling
+				 buttons[y][x].addActionListener(this); //When button is clicked, pass on event to an instance of this class.
+				 buttons[y][x].setOpaque(false); 
 				 buttons[y][x].setContentAreaFilled(false);
 				 buttons[y][x].setBorderPainted(false);
 				 
@@ -79,19 +76,31 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	boolean canceled;
+	boolean processing;
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(customRedrawn == true) { //If the board was redrawn using the "<" or ">" button, then do this instead
+			redrawBoard(); //Redraw current board. 
+			customRedrawn = false; //Board is now the current "real" board, so no need to repeat this operation.
+			statDisplay.resetCurrentPosition();
+			System.out.println("Just reset");
+			return; 
+		}
+		
 		int x = Integer.parseInt(e.getActionCommand()) % 8;
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
 		System.out.println("Y: " + y + "    X: " + x);
 		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
-			if(move[0] == y && move[1] == x) {
+			if(move[0] == y && move[1] == x && !processing) {
 				//When cancelled is set to false, minimaxThread will update the board after computing 
 				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
 				canceled = false; 
-				System.out.println("Hello!");
+				processing = true;
+				statDisplay.appendToPane(getMoveString(x, y), Color.white);
 				boardstate = boardstate.makeMove(current_player, move);
 				redrawBoard();
+				statDisplay.updatePieceLabels(boardstate);
+				statDisplay.addToHistory(boardstate);
 				current_player = oppositePlayer(current_player);			
 				minimaxThread();
 				break;
@@ -113,10 +122,15 @@ public class Display extends JPanel implements ActionListener {
 			protected void done() {
 				try {
 					if(!canceled) {
-						int[] output_move = get();
+						int[] output_move = get(); //sets output_move to what doInBackground() eventually returns
+						statDisplay.appendToPane(getMoveString(output_move[1], output_move[0]), Color.red);
 						boardstate = boardstate.makeMove(current_player, output_move);
-						redrawBoard();
+						statDisplay.updatePieceLabels(boardstate);
 						current_player = oppositePlayer(current_player);
+						statDisplay.addToHistory(boardstate);
+						processing = false;
+						statDisplay.resetCurrentPosition();
+						redrawBoard();
 					}
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
@@ -152,6 +166,29 @@ public class Display extends JPanel implements ActionListener {
 	 	}
 	}
 	
+	boolean customRedrawn = false;
+	public void redrawBoard(Board board) {
+		Board temp_board = board;
+		customRedrawn = true;
+		for(int j = 0; j < 8; j++) {
+			for(int i = 0; i < 8; i++) {
+				if(temp_board.getBoard()[j][i] == empty)  {
+					buttons[j][i].setIcon(null);
+					this.add(buttons[j][i]);
+				}
+				if(temp_board.getBoard()[j][i] == white) {
+					buttons[j][i].setIcon(new ImageIcon("resources\\White_Piece.png"));
+					this.add(buttons[j][i]);
+				}
+				if(temp_board.getBoard()[j][i] == black)  {
+					buttons[j][i].setIcon(new ImageIcon("resources\\Black_Piece.png"));
+					this.add(buttons[j][i]);
+				}
+			 
+			}
+	 	}
+	}
+	
 	private int oppositePlayer(int player) {
 		if(player == white) return black;
 		else return white;
@@ -159,20 +196,33 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	public void newGame() {
+		customRedrawn = false;
+		canceled = true; //Stop the computer's move from being drawn.
 		boardstate = new Board();
 		current_player = white;
 		redrawBoard();
-		canceled = true;
+		statDisplay.updatePieceLabels(boardstate);
 	}
 	
-	public Board getBoard() {
-		return boardstate;
-	}
-	
-	//Setter to pass reference of statDisplay so that an instance of this class can influence an instance of statDisplay
+	//Setter used to pass reference of statDisplay so that an instance of this class can call methods in an instance of statDisplay
 	public void setStatDisplay(Stat_Display statDisplay) { 
 		this.statDisplay = statDisplay; 
 	}
+	
+	public int total_moves = 1;
+	private String getMoveString(int x, int y) {
+		String[] matches = {"a", "b", "c", "d", "e", "f", "g", "h"};
+		if(total_moves >= 10 && total_moves % 3 == 0) {
+			return (total_moves++ + ". " + matches[x] + y + "\n");
+		} else if  (total_moves >= 10 && total_moves % 3 != 0){
+			return (total_moves++ + ". " + matches[x] + y + " ");
+		} else if  (total_moves < 10 && total_moves % 3 != 0){
+			return (" " + total_moves++ + ". " + matches[x] + y + " ");
+		} else {
+			return (" " + total_moves++ + ". " + matches[x] + y + "\n");
+		}
+	}
+	
 }
 
 
