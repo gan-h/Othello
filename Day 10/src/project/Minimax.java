@@ -31,6 +31,8 @@ public class Minimax {
 				minEval = lesser(minEval, eval);
 				if (previous != minEval) final_move = move;
 			}
+			
+			System.out.println(totalSearched);
 		}
 		
 		return final_move;
@@ -77,5 +79,9 @@ public class Minimax {
 		} else {
 			return b;
 		}
+	}
+	
+	public static void resetMinimaxMoveCount() {
+		totalSearched = 0;
 	}
 }

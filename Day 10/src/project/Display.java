@@ -7,18 +7,21 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 public class Display extends JPanel implements ActionListener {
 	private JButton[][] buttons;
-	private Stat_Display statDisplay;
+	private Stat_Display statDisplay; //Designated variable for storing reference to statDisplay so that statDisplay may be influenced.
 	private Board boardstate;
 	private int current_player;
 	private static int empty = 0;
 	private static int white = 1;
 	private static int black = 2;
-	public Display() {        //Constructor overlays a button over every square in the grid.
+	private JLabel[] numbers;
+	private JLabel[] letters;
+	public Display() {        //Constructor overlays a button over every square in the grid
 		boardstate = new Board();
 		current_player = white;
 		setLayout(null);
-		setBounds(0,0,487,487);
 		buttons = new JButton[8][8];
+		numbers = new JLabel[8];
+		letters = new JLabel[8];
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 8; x ++) {
 				 if(boardstate.getBoard()[y][x] == empty) {
@@ -45,21 +48,45 @@ public class Display extends JPanel implements ActionListener {
 				 
 				
 			}
+			numbers[0] = new JLabel("1");
+			numbers[1] = new JLabel("2");
+			numbers[2] = new JLabel("3");
+			numbers[3] = new JLabel("4");
+			numbers[4] = new JLabel("5");
+			numbers[5] = new JLabel("6");
+			numbers[6] = new JLabel("7");
+			numbers[7] = new JLabel("8");
+			
+			letters[0] = new JLabel("a");
+			letters[1] = new JLabel("b");
+			letters[2] = new JLabel("c");
+			letters[3] = new JLabel("d");
+			letters[4] = new JLabel("e");
+			letters[5] = new JLabel("f");
+			letters[6] = new JLabel("g");
+			letters[7] = new JLabel("h");
+			
+			for(int i = 0; i < 8; i++) {
+				letters[i].setBounds(0, 60 * i - 1, 9, 15);
+				numbers[i].setBounds(60 * i + 52, 467, 9, 9);
+				this.add(numbers[i]);
+				this.add(letters[i]);
+			}
 		}
 		repaint();
 	}
 	@Override
-	public Dimension getPreferredSize() {
+	public Dimension getPreferredSize() { //Set size for this panel
 		return new Dimension(480, 480);
 	}
 	
-	public void paintComponent(Graphics g) { 
+	public void paintComponent(Graphics g) {  //Draw the Othello board
 		super.paintComponent(g);
 		g.setColor(new Color(0, 199, 17));
 		g.fillRect(0, 0, 480, 480);
 		g.setColor(Color.BLACK);
 		//Horizontal Black Lines
-		g.fillRect(0, 61,  480, 1); 
+		g.fillRect(0, 61,  480, 1);
 		g.fillRect(0, 121, 480, 1);
 		g.fillRect(0, 181, 480, 1);
 		g.fillRect(0, 241, 480, 1);
@@ -76,29 +103,32 @@ public class Display extends JPanel implements ActionListener {
 		g.fillRect(421, 0, 1, 480);
 	}
 	
-	boolean canceled;
+	boolean canceled; //Boolean flags
 	boolean processing;
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(customRedrawn == true) { //If the board was redrawn using the "<" or ">" button, then do this instead
+		if(customRedrawn == true) { //If the board was redrawn using the "<" or ">" button
 			redrawBoard(); //Redraw current board. 
-			customRedrawn = false; //Board is now the current "real" board, so no need to repeat this operation.
-			statDisplay.resetCurrentPosition();
+			customRedrawn = false; //Board is now the current "real" board, so set this flag to false.
+			statDisplay.resetCurrentPosition(); //Reset current_position to match the current board state. 
+			statDisplay.highlight(); //Update highlight so that it matches current_position
 			System.out.println("Just reset");
 			return; 
 		}
 		
-		int x = Integer.parseInt(e.getActionCommand()) % 8;
+		//Calculate which square the click occurred
+		int x = Integer.parseInt(e.getActionCommand()) % 8; 
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
-		System.out.println("Y: " + y + "    X: " + x);
-		System.out.println("Current Turn:" + current_player);
+		
+		
 		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
 			if(move[0] == y && move[1] == x && !processing) {
-				System.out.println("hello");
+				
 				//When cancelled is set to false, minimaxThread will update the board after computing 
 				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
 				canceled = false; 
 				processing = true;
+				statDisplay.resetHinterLabel();
 				statDisplay.appendToPane(getMoveString(x, y), Color.white);
 				boardstate = boardstate.makeMove(current_player, move);
 				redrawBoard();
@@ -112,14 +142,14 @@ public class Display extends JPanel implements ActionListener {
 		}
 	}
 	
-	private void minimaxThread() {
+	private void minimaxThread() { 
 		SwingWorker<int[], Void> minimax = new SwingWorker<int[], Void>(){
 
 			@Override
-			protected int[] doInBackground() throws Exception {
-				if(!canceled) {
+			protected int[] doInBackground() throws Exception { 
+				if(!canceled) { //If user did not click "New Game", do this:
 				return Minimax.findMove(boardstate, 6, current_player);
-				} else return new int[] {0,0};
+				} else return new int[] {-1, -1}; //This is just here because there must be something returned. This code is never going to affect anything.
 			}
 
 			@Override
@@ -127,6 +157,7 @@ public class Display extends JPanel implements ActionListener {
 				processing = false;
 				try {
 					if(!canceled) {
+						Minimax.resetMinimaxMoveCount();
 						int[] output_move = get(); //sets output_move to what doInBackground() eventually returns
 						statDisplay.appendToPane(getMoveString(output_move[1], output_move[0]), Color.red);
 						boardstate = boardstate.makeMove(current_player, output_move);
@@ -152,7 +183,7 @@ public class Display extends JPanel implements ActionListener {
 	
 	
 	
-	public void redrawBoard() {
+	public void redrawBoard() { //Update the look of the board to match the array representing the board.
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(boardstate.getBoard()[j][i] == empty)  {
@@ -172,10 +203,9 @@ public class Display extends JPanel implements ActionListener {
 	 	}
 	}
 	
-	boolean customRedrawn = false;
+	boolean customRedrawn = false; //Boolean flag for telling the rest of the program if the user clicked one of the buttons.
 	public void redrawBoard(Board board) {
 		Board temp_board = board;
-		customRedrawn = true;
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(temp_board.getBoard()[j][i] == empty)  {
@@ -202,6 +232,7 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	public void newGame() {
+		Minimax.resetMinimaxMoveCount();
 		customRedrawn = false;
 		processing = false;
 		canceled = true; //Stop the computer's move from being drawn.
@@ -218,16 +249,26 @@ public class Display extends JPanel implements ActionListener {
 	
 	public int total_moves = 1;
 	private String getMoveString(int x, int y) {
+		x++;
 		String[] matches = {"a", "b", "c", "d", "e", "f", "g", "h"};
 		if(total_moves >= 10 && total_moves % 4 == 0) {
-			return (total_moves++ + ". " + matches[x] + y + "\n");
+			return (total_moves++ + ". " + matches[y] + x + "\n");
 		} else if  (total_moves >= 10 && total_moves % 4 != 0){
-			return (total_moves++ + ". " + matches[x] + y + " ");
+			return (total_moves++ + ". " + matches[y] + x + " ");
 		} else if  (total_moves < 10 && total_moves % 4 != 0){
-			return (" " + total_moves++ + ". " + matches[x] + y + " ");
+			return (" " + total_moves++ + ". " + matches[y] + x + " ");
 		} else {
-			return (" " + total_moves++ + ". " + matches[x] + y + "\n");
+			return (" " + total_moves++ + ". " + matches[y] + x + "\n");
 		}
+	}
+	public void setCustomFlagState(boolean state) {
+		customRedrawn = state;
+	}
+	public Board getBoard() {
+		return boardstate;
+	}
+	public int getCurrentPlayer() {
+		return current_player;
 	}
 	
 }
