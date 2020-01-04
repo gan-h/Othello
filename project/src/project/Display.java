@@ -30,12 +30,12 @@ public class Display extends JPanel implements ActionListener {
 						this.add(buttons[y][x]);
 					}
 				 else if(boardstate.getBoard()[y][x] == white) {
-					buttons[y][x] = new JButton(new ImageIcon("resources\\White_Piece.png"));
+					buttons[y][x] = new JButton(new ImageIcon(this.getClass().getResource("/White_Piece.png"))); 
 					buttons[y][x].setBounds(x * 60 , y * 60 + 0, 60, 60);
 					this.add(buttons[y][x]);
 				}
 				 else  {
-					buttons[y][x] = new JButton(new ImageIcon("resources\\Black_Piece.png")); 
+					buttons[y][x] = new JButton(new ImageIcon(this.getClass().getResource("/Black_Piece.png"))); 
 					buttons[y][x].setBounds(x * 60 , y * 60 + 0, 60, 60);
 					this.add(buttons[y][x]);
 				}
@@ -159,6 +159,7 @@ public class Display extends JPanel implements ActionListener {
 					if(!canceled) {
 						Minimax.resetMinimaxMoveCount();
 						int[] output_move = get(); //sets output_move to what doInBackground() eventually returns
+						if(output_move.length < 2) return;
 						statDisplay.appendToPane(getMoveString(output_move[1], output_move[0]), Color.red);
 						boardstate = boardstate.makeMove(current_player, output_move);
 						statDisplay.updatePieceLabels(boardstate);
@@ -191,11 +192,11 @@ public class Display extends JPanel implements ActionListener {
 					this.add(buttons[j][i]);
 				}
 				if(boardstate.getBoard()[j][i] == white) {
-					buttons[j][i].setIcon(new ImageIcon("resources\\White_Piece.png"));
+					buttons[j][i].setIcon(new ImageIcon(this.getClass().getResource("/White_Piece.png")));
 					this.add(buttons[j][i]);
 				}
 				if(boardstate.getBoard()[j][i] == black)  {
-					buttons[j][i].setIcon(new ImageIcon("resources\\Black_Piece.png"));
+					buttons[j][i].setIcon(new ImageIcon(this.getClass().getResource("/Black_Piece.png")));
 					this.add(buttons[j][i]);
 				}
 			 
@@ -213,11 +214,11 @@ public class Display extends JPanel implements ActionListener {
 					this.add(buttons[j][i]);
 				}
 				if(temp_board.getBoard()[j][i] == white) {
-					buttons[j][i].setIcon(new ImageIcon("resources\\White_Piece.png"));
+					buttons[j][i].setIcon(new ImageIcon(this.getClass().getResource("/White_Piece.png")));
 					this.add(buttons[j][i]);
 				}
 				if(temp_board.getBoard()[j][i] == black)  {
-					buttons[j][i].setIcon(new ImageIcon("resources\\Black_Piece.png"));
+					buttons[j][i].setIcon(new ImageIcon(this.getClass().getResource("/Black_Piece.png")));
 					this.add(buttons[j][i]);
 				}
 			 

@@ -281,6 +281,10 @@ public class Stat_Display extends JPanel implements ActionListener{
 				try {
 						Minimax.resetMinimaxMoveCount();
 						int[] move = get(); //sets output_move to what doInBackground() eventually returns
+						if(move.length < 2) {
+							hinter.setText("Uh oh. No possible moves!");
+							return;
+						}
 						String[] matches = {"a", "b", "c", "d", "e", "f", "g", "h"};
 						hinter.setText(matches[move[0]] + (move[1] + 1));
 						
