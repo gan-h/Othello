@@ -1,5 +1,16 @@
 <b>Othello Game with Minimax Computer Player and Slick GUI</b>
 
+How to run this program:
+- Download latest master commit.
+- First: Try running the jar file. If that works, then great! You are done here. 
+- If the jar file did not work, then:
+- - Compile the java files in the src folder
+- - Replace the .class files in bin/project with the newly compiled java files 
+- - Run: "java project.Drawboard" (be sure to be in the bin folder, and that you are only in the bin folder, not in the bin/projects folder)
+
+<i>This program is JRE 1.7 and above compliant.</i>
+
+
 Development Log:
 Day 1: 
 - finished legal move detection system
