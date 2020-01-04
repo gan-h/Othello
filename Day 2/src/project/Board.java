@@ -17,8 +17,8 @@ public class Board {
 				{0, 0, 0, 0, 0, 0, 0, 0}
 		};
 	}
-	public Board(int[][] boardstate) { 
-		this.boardstate = boardstate;
+	public Board(int[][] board) { 
+		this.boardstate = board;
 		
 	}
 	public void printBoard() {
@@ -26,6 +26,10 @@ public class Board {
 			System.out.println(Arrays.toString(x));
 			
 		}
+	}
+	public int[][] getBoard() {
+		return this.boardstate;
+		
 	}
 	public ArrayList<int[]> getLegalMoves(int player) {
 		int opposite = getOppositePlayer(player);
@@ -42,7 +46,7 @@ public class Board {
 						
 						if(boardstate[y][i] == 0) continue outerloop;
 						if(boardstate[y][i] == player) {
-							System.out.println("Fired east");
+							//System.out.println("Fired east");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -56,7 +60,7 @@ public class Board {
 					for(int i = x - 1; i >= 0; i--) {
 						if(boardstate[y][i] == 0) continue outerloop;
 						if(boardstate[y][i] == player) {
-							System.out.println("Fired west");
+							//System.out.println("Fired west");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -68,7 +72,7 @@ public class Board {
 					for(int i = y + 1; i <= 7; i++) {
 						if(boardstate[i][x] == 0) continue outerloop;
 						if(boardstate[i][x] == player) {
-							System.out.println("Fired south");
+							//System.out.println("Fired south");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -80,7 +84,7 @@ public class Board {
 					for(int i = y - 1; i >= 0; i--) {
 						if(boardstate[i][x] == 0) continue outerloop;
 						if(boardstate[i][x] == player) {
-							System.out.println("Fired north");
+							//System.out.println("Fired north");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -92,7 +96,7 @@ public class Board {
 					for(int i = x + 1, j = y - 1; i <= 7 && j >= 0; i++, j--) {
 						if(boardstate[j][i] == 0) continue outerloop;
 						if(boardstate[j][i] == player) {
-							System.out.println("Fired north-east");
+							//System.out.println("Fired north-east");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -103,7 +107,7 @@ public class Board {
 					for(int i = x - 1, j = y - 1; i >= 0 && j >= 0; i--, j--) {
 						if(boardstate[j][i] == 0) continue outerloop;
 						if(boardstate[j][i] == player) {
-							System.out.println("Fired North-west");
+							//System.out.println("Fired North-west");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -114,7 +118,7 @@ public class Board {
 					for(int i = x + 1, j = y + 1; i <= 7 && j <= 7; i++, j++) {
 						if(boardstate[j][i] == 0) continue outerloop;
 						if(boardstate[j][i] == player) {
-							System.out.println("Fired south-east");
+							//System.out.println("Fired south-east");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -125,7 +129,7 @@ public class Board {
 					for(int i = x - 1, j = y + 1; i >= 0 && j <= 7; i--, j++) {
 						if(boardstate[j][i] == 0) continue outerloop;
 						if(boardstate[j][i] == player) {
-							System.out.println("Fired south-west");
+							//System.out.println("Fired south-west");
 							int[] coordinate = {y, x};
 							output.add(coordinate);
 							continue outerloop;
@@ -139,96 +143,103 @@ public class Board {
 		return output;
 	}
 	
-	public void makeMove(int player, int[] move) {
+	public Board makeMove(int player, int[] move) {
+		int[][] temp_board = new int[8][8];
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				temp_board[i][j] = boardstate[i][j];
+			}
+		}
+		
 		int y = move[0];
 		int x = move[1];
-		System.out.println("Changing the board");
+		//System.out.println("Changing the board");
 		int opposite = getOppositePlayer(player);
-		if(x != 6 && x != 7 && boardstate[y][x + 1] == opposite) { //East
+		if(x != 6 && x != 7 && temp_board[y][x + 1] == opposite) { //East
 			
 			for(int i = x + 1; i <= 7; i++) {
 				
-				if(boardstate[y][i] == 0) break;
-				if(boardstate[y][i] == player) {
-					for(int change = x; change < i; change++) boardstate[y][change] = player;
+				if(temp_board[y][i] == 0) break;
+				if(temp_board[y][i] == player) {
+					for(int change = x; change < i; change++) temp_board[y][change] = player;
 					break;
 				}
 			}
 		}
 		
 		
-		if(x != 0 && x != 1 && boardstate[y][x - 1] == opposite) { //West
+		if(x != 0 && x != 1 && temp_board[y][x - 1] == opposite) { //West
 			
 			for(int i = x - 1; i >= 0; i--) {
-				if(boardstate[y][i] == 0) break;
-				if(boardstate[y][i] == player) {
-					for(int change = x; change > i; change--) boardstate[y][change] = player;
+				if(temp_board[y][i] == 0) break;
+				if(temp_board[y][i] == player) {
+					for(int change = x; change > i; change--) temp_board[y][change] = player;
 					break;
 				}
 			}
 		}
 		
-		if(y != 6 && y != 7 && boardstate[y + 1][x] == opposite) { //South
+		if(y != 6 && y != 7 && temp_board[y + 1][x] == opposite) { //South
 			for(int i = y + 1; i <= 7; i++) {
-				if(boardstate[i][x] == 0) break;
-				if(boardstate[i][x] == player) {
-					for(int change = y; change < i; change++) boardstate[change][x] = player;
+				if(temp_board[i][x] == 0) break;
+				if(temp_board[i][x] == player) {
+					for(int change = y; change < i; change++) temp_board[change][x] = player;
 					break;
 				}
 			}
 		}
 		
-		if(y != 0 && y != 1 && boardstate[y - 1][x] == opposite) { //North
+		if(y != 0 && y != 1 && temp_board[y - 1][x] == opposite) { //North
 			for(int i = y - 1; i >= 0; i--) {
-				if(boardstate[i][x] == 0) break;
-				if(boardstate[i][x] == player) {
-					for(int change = y; change > i; change--) boardstate[change][x] = player;
+				if(temp_board[i][x] == 0) break;
+				if(temp_board[i][x] == player) {
+					for(int change = y; change > i; change--) temp_board[change][x] = player;
 					break;
 				}
 			}
 		}
 		
-		if(x != 7 && x != 6 && y != 1 && y != 0 && boardstate[y-1][x+1] == opposite) { //North-East
+		if(x != 7 && x != 6 && y != 1 && y != 0 && temp_board[y-1][x+1] == opposite) { //North-East
 			for(int i = x + 1, j = y - 1; i <= 7 && j >= 0; i++, j--) {
-				if(boardstate[j][i] == 0) break;
-				if(boardstate[j][i] == player) {
-					for(int changeX = x, changeY = y; changeX < i && changeY > j; changeX++, changeY--) boardstate[changeY][changeX] = player;
+				if(temp_board[j][i] == 0) break;
+				if(temp_board[j][i] == player) {
+					for(int changeX = x, changeY = y; changeX < i && changeY > j; changeX++, changeY--) temp_board[changeY][changeX] = player;
 					break;
 				}
 			}
 		}
-		if(x != 1 && x != 0 && y != 1 && y != 0 && boardstate[y-1][x-1] == opposite) { //North-West
+		if(x != 1 && x != 0 && y != 1 && y != 0 && temp_board[y-1][x-1] == opposite) { //North-West
 			for(int i = x - 1, j = y - 1; i >= 0 && j >= 0; i--, j--) {
-				if(boardstate[j][i] == 0) break;
-				if(boardstate[j][i] == player) {
-					for(int changeX = x, changeY = y; changeX > i && changeY > j; changeX--, changeY--) boardstate[changeY][changeX] = player;
+				if(temp_board[j][i] == 0) break;
+				if(temp_board[j][i] == player) {
+					for(int changeX = x, changeY = y; changeX > i && changeY > j; changeX--, changeY--) temp_board[changeY][changeX] = player;
 					break;
 				}
 			}
 		}		
-		if(x != 7 && x != 6 && y != 7 && y != 6 && boardstate[y+1][x+1] == opposite) { //South-East
+		if(x != 7 && x != 6 && y != 7 && y != 6 && temp_board[y+1][x+1] == opposite) { //South-East
 			for(int i = x + 1, j = y + 1; i <= 7 && j <= 7; i++, j++) {
-				if(boardstate[j][i] == 0) break;
-				if(boardstate[j][i] == player) {
-					for(int changeX = x, changeY = y; changeX < i && changeY < j; changeX++, changeY++) boardstate[changeY][changeX] = player;
+				if(temp_board[j][i] == 0) break;
+				if(temp_board[j][i] == player) {
+					for(int changeX = x, changeY = y; changeX < i && changeY < j; changeX++, changeY++) temp_board[changeY][changeX] = player;
 					break;
 				}
 			}
 		}	
-		if(x != 1 && x != 0 && y != 7 && y != 6 && boardstate[y+1][x-1] == opposite) { //South-West
+		if(x != 1 && x != 0 && y != 7 && y != 6 && temp_board[y+1][x-1] == opposite) { //South-West
 			for(int i = x - 1, j = y + 1; i >= 0 && j <= 7; i--, j++) {
-				if(boardstate[j][i] == 0) break;
-				if(boardstate[j][i] == player) {
-					for(int changeX = x, changeY = y; changeX > i && changeY < j; changeX--, changeY++) boardstate[changeY][changeX] = player;
+				if(temp_board[j][i] == 0) break;
+				if(temp_board[j][i] == player) {
+					for(int changeX = x, changeY = y; changeX > i && changeY < j; changeX--, changeY++) temp_board[changeY][changeX] = player;
 					break;
 				}
 			}
 		}
-		
+		return new Board(temp_board);
 	}
 	//
 	
-	public int getOppositePlayer(int player) {
+	private int getOppositePlayer(int player) {
 		if(player == 1) {
 			return 2;
 		} else {
