@@ -11,7 +11,10 @@ public class Gameloop {
 	public static void main(String args[]) {
 		boolean finished = false;
 		Scanner keyboard = new Scanner(System.in);
+		Board board = new Board();
 		
+		String message = Arrays.toString(Minimax.findMove(board, 1, black));
+		System.out.println(message);
 		
 		
 		

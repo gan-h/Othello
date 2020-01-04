@@ -5,22 +5,24 @@ import java.util.Arrays;
 public class Minimax {
 	final static int white = 1;
 	final static int black = 2;
-	
+	static int totalSearched = 0;
 	public static int[] findMove(Board board, int depth, int player) {
 		int[] final_move = new int[1]; //Is left as [0] if there are no moves found.
+		
 		if(player == white) {
+			totalSearched++;
 			int maxEval = Integer.MIN_VALUE;
 			for(int[] move : board.getLegalMoves(player)) {
-				System.out.println(Arrays.toString(move));
+				
 				int eval = Minimax.minimax(board.makeMove(player, move), depth - 1, black);
-				board.makeMove(player, move).printBoard();
-				System.out.println(eval);
+				
 				int previous = maxEval;
 				maxEval = greater(maxEval, eval);
 				if (previous != maxEval) final_move = move;
 			}
 		}
 		else { //player == black
+			totalSearched++;
 			int minEval = Integer.MAX_VALUE;
 			for(int[] move : board.getLegalMoves(player)) {
 				int eval = Minimax.minimax(board.makeMove(player, move), depth - 1, white);
@@ -30,6 +32,7 @@ public class Minimax {
 				if (previous != minEval) final_move = move;
 			}
 		}
+		
 		return final_move;
 	}
 	
@@ -37,8 +40,10 @@ public class Minimax {
 		if(depth == 0 || board.getLegalMoves(player).size() == 0) {
 			return Evaluation.evaluate(board, player);
 		}
+		
 		if(player == white) {
-			System.out.println(depth);
+			totalSearched++;
+			
 			int maxEval = Integer.MIN_VALUE;
 			for(int[] move : board.getLegalMoves(player)) {
 				int eval = Minimax.minimax(board.makeMove(player, move), depth - 1, black);
@@ -47,6 +52,8 @@ public class Minimax {
 			return maxEval;
 		}
 		else { //player == black
+			totalSearched++;
+			
 			int minEval = Integer.MAX_VALUE;
 			for(int[] move : board.getLegalMoves(player)) {
 				int eval = Minimax.minimax(board.makeMove(player, move), depth - 1, white);

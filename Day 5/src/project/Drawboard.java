@@ -22,12 +22,13 @@ public class Drawboard extends JFrame {
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setUndecorated(true);
-		JPanel stat_display = new Stat_Display();
-		JPanel display = new Display();
-		
+		Stat_Display statDisplay = new Stat_Display();
+		Display display = new Display();
+		display.setStatDisplay(statDisplay);
+		statDisplay.setDisplay(display);
 		
 		frame.add(display, BorderLayout.WEST);
-		frame.add(stat_display, BorderLayout.EAST);
+		frame.add(statDisplay, BorderLayout.EAST);
 		
 		boardstate = new Board();
 		frame.setVisible(true);

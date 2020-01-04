@@ -4,10 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
 public class Display extends JPanel implements ActionListener {
 	private JButton[][] buttons;
+	private Stat_Display statDisplay;
 	private Board boardstate;
 	private int current_player;
 	private static int empty = 0;
@@ -74,28 +77,68 @@ public class Display extends JPanel implements ActionListener {
 		g.fillRect(361, 0, 1, 480);
 		g.fillRect(421, 0, 1, 480);
 	}
+	
+	boolean canceled;
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int x = Integer.parseInt(e.getActionCommand()) % 8;
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
 		System.out.println("Y: " + y + "    X: " + x);
-		for(int[] z : boardstate.getLegalMoves(current_player)) {
-			System.out.println(Arrays.toString(z));
-		}
-		for(int[] move: boardstate.getLegalMoves(current_player)) {
+		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
 			if(move[0] == y && move[1] == x) {
+				//When cancelled is set to false, minimaxThread will update the board after computing 
+				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
+				canceled = false; 
+				System.out.println("Hello!");
 				boardstate = boardstate.makeMove(current_player, move);
 				redrawBoard();
-				current_player = oppositePlayer(current_player);
+				current_player = oppositePlayer(current_player);			
+				minimaxThread();
 				break;
 				
 			}
 		}
 	}
 	
+	private void minimaxThread() {
+		SwingWorker<int[], Void> minimax = new SwingWorker<int[], Void>(){
+
+			@Override
+			protected int[] doInBackground() throws Exception {
+				
+				return Minimax.findMove(boardstate, 7, current_player); 
+			}
+
+			@Override
+			protected void done() {
+				try {
+					if(!canceled) {
+						int[] output_move = get();
+						boardstate = boardstate.makeMove(current_player, output_move);
+						redrawBoard();
+						current_player = oppositePlayer(current_player);
+					}
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+				
+				super.done();
+			}
+		};
+		minimax.execute();
+		
+	}
+	
+	
+	
+	
 	private void redrawBoard() {
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
+				if(boardstate.getBoard()[j][i] == empty)  {
+					buttons[j][i].setIcon(null);
+					this.add(buttons[j][i]);
+				}
 				if(boardstate.getBoard()[j][i] == white) {
 					buttons[j][i].setIcon(new ImageIcon("resources\\White_Piece.png"));
 					this.add(buttons[j][i]);
@@ -113,6 +156,22 @@ public class Display extends JPanel implements ActionListener {
 		if(player == white) return black;
 		else return white;
 		
+	}
+	
+	public void newGame() {
+		boardstate = new Board();
+		current_player = white;
+		redrawBoard();
+		canceled = true;
+	}
+	
+	public Board getBoard() {
+		return boardstate;
+	}
+	
+	//Setter to pass reference of statDisplay so that an instance of this class can influence an instance of statDisplay
+	public void setStatDisplay(Stat_Display statDisplay) { 
+		this.statDisplay = statDisplay; 
 	}
 }
 
