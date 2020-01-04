@@ -23,7 +23,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	JScrollPane jsp;
 	Stat_Display(){
 		setLayout(null);
-		setBackground(Color.black);
+		setBackground(new Color(39,37,34));
 	
 		current_position = 0;
 		boardHistory = new ArrayList<Board>(30);
@@ -35,23 +35,34 @@ public class Stat_Display extends JPanel implements ActionListener{
 		
 		back = new JButton("<");
 		back.addActionListener(this);
+		back.setBounds(67, 360, 45, 25);
+		back.setContentAreaFilled(true);
+		back.setBorderPainted(false);
+		back.setForeground(Color.white);
+		back.setFocusPainted(false);
+		back.setBackground(new Color(26, 25, 23));
+		
 		forwards = new JButton(">");
 		forwards.addActionListener(this);
-		back.setBounds(67, 360, 45, 25);
 		forwards.setBounds(118, 360, 45, 25);
-		
+		forwards.setContentAreaFilled(true);
+		forwards.setBorderPainted(false);
+		forwards.setForeground(Color.white);
+		forwards.setFocusPainted(false);
+		forwards.setBackground(new Color(26, 25, 23));
 		
 		jtp = new JTextPane();
-		jsp = new JScrollPane(jtp, 
-		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jsp.getVerticalScrollBar().setPreferredSize(new Dimension(7, Integer.MAX_VALUE));
-		jsp.setBounds(28, 240, 172, 120);
-		jsp.getVerticalScrollBar().setBackground(Color.BLACK);
-		//jta.setEditable(false);
+		jtp.setEditable(false);
 		jtp.setBackground(Color.DARK_GRAY);
 		jtp.setCaretColor(Color.white);
+		
+		jsp = new JScrollPane(jtp, 
+		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jsp.setViewportBorder(null);
 		jsp.setBorder(null);
+		jsp.getVerticalScrollBar().setPreferredSize(new Dimension(7, Integer.MAX_VALUE));
+		jsp.setBounds(0, 200, 220, 160);
+		jsp.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
 		
 		jsp.getVerticalScrollBar().setUI(new BasicScrollBarUI()
 	    {   
@@ -118,11 +129,17 @@ public class Stat_Display extends JPanel implements ActionListener{
 			if(current_position - 1 >= 0) current_position--;
 			display.redrawBoard(boardHistory.get(current_position));
 			
+			
 		} 
 		
 		if(e.getActionCommand().equals(">")) {
 			if(current_position + 1 <= boardHistory.size() - 1) current_position++;
-			display.redrawBoard(boardHistory.get(current_position));
+			if(current_position == boardHistory.size() - 1) {
+				display.redrawBoard();
+			} else {
+				display.redrawBoard(boardHistory.get(current_position));
+			}
+			
 		} 
 	}
 	
@@ -132,6 +149,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	
 	public void appendToPane(String msg, Color c)
     {
+		StyledDocument doc = jtp.getStyledDocument();
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
@@ -139,9 +157,11 @@ public class Stat_Display extends JPanel implements ActionListener{
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_CENTER);
 
         int len = jtp.getDocument().getLength();
-        jtp.setCaretPosition(len);
-        jtp.setCharacterAttributes(aset, false);
-        jtp.replaceSelection(msg);
+        try {
+			doc.insertString(len, msg, aset);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
     }
 	
 	public void updatePieceLabels(Board board) {
@@ -161,12 +181,12 @@ public class Stat_Display extends JPanel implements ActionListener{
 	public void addToHistory(Board board) {
 		boardHistory.add(board);
 		current_position++;
-		System.out.println("Current_Position: " + current_position);
-		System.out.println("Current_Size: " + boardHistory.size());
+		
 	}
 	
 	public void resetCurrentPosition() {
 		current_position = boardHistory.size() - 1;
 	}
+	
 	
 }

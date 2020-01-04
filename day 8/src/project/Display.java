@@ -41,6 +41,7 @@ public class Display extends JPanel implements ActionListener {
 				 buttons[y][x].setOpaque(false); 
 				 buttons[y][x].setContentAreaFilled(false);
 				 buttons[y][x].setBorderPainted(false);
+				 buttons[y][x].setFocusPainted(false);
 				 
 				
 			}
@@ -90,8 +91,10 @@ public class Display extends JPanel implements ActionListener {
 		int x = Integer.parseInt(e.getActionCommand()) % 8;
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
 		System.out.println("Y: " + y + "    X: " + x);
+		System.out.println("Current Turn:" + current_player);
 		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
 			if(move[0] == y && move[1] == x && !processing) {
+				System.out.println("hello");
 				//When cancelled is set to false, minimaxThread will update the board after computing 
 				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
 				canceled = false; 
@@ -114,12 +117,14 @@ public class Display extends JPanel implements ActionListener {
 
 			@Override
 			protected int[] doInBackground() throws Exception {
-				
-				return Minimax.findMove(boardstate, 7, current_player); 
+				if(!canceled) {
+				return Minimax.findMove(boardstate, 7, current_player);
+				} else return new int[] {0,0};
 			}
 
 			@Override
 			protected void done() {
+				processing = false;
 				try {
 					if(!canceled) {
 						int[] output_move = get(); //sets output_move to what doInBackground() eventually returns
@@ -128,8 +133,8 @@ public class Display extends JPanel implements ActionListener {
 						statDisplay.updatePieceLabels(boardstate);
 						current_player = oppositePlayer(current_player);
 						statDisplay.addToHistory(boardstate);
-						processing = false;
 						statDisplay.resetCurrentPosition();
+						customRedrawn = false;
 						redrawBoard();
 					}
 				} catch (InterruptedException | ExecutionException e) {
@@ -146,7 +151,7 @@ public class Display extends JPanel implements ActionListener {
 	
 	
 	
-	private void redrawBoard() {
+	public void redrawBoard() {
 		for(int j = 0; j < 8; j++) {
 			for(int i = 0; i < 8; i++) {
 				if(boardstate.getBoard()[j][i] == empty)  {
@@ -197,6 +202,7 @@ public class Display extends JPanel implements ActionListener {
 	
 	public void newGame() {
 		customRedrawn = false;
+		processing = false;
 		canceled = true; //Stop the computer's move from being drawn.
 		boardstate = new Board();
 		current_player = white;
@@ -212,11 +218,11 @@ public class Display extends JPanel implements ActionListener {
 	public int total_moves = 1;
 	private String getMoveString(int x, int y) {
 		String[] matches = {"a", "b", "c", "d", "e", "f", "g", "h"};
-		if(total_moves >= 10 && total_moves % 3 == 0) {
+		if(total_moves >= 10 && total_moves % 4 == 0) {
 			return (total_moves++ + ". " + matches[x] + y + "\n");
-		} else if  (total_moves >= 10 && total_moves % 3 != 0){
+		} else if  (total_moves >= 10 && total_moves % 4 != 0){
 			return (total_moves++ + ". " + matches[x] + y + " ");
-		} else if  (total_moves < 10 && total_moves % 3 != 0){
+		} else if  (total_moves < 10 && total_moves % 4 != 0){
 			return (" " + total_moves++ + ". " + matches[x] + y + " ");
 		} else {
 			return (" " + total_moves++ + ". " + matches[x] + y + "\n");
