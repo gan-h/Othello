@@ -118,7 +118,7 @@ public class Display extends JPanel implements ActionListener {
 			@Override
 			protected int[] doInBackground() throws Exception {
 				if(!canceled) {
-				return Minimax.findMove(boardstate, 7, current_player);
+				return Minimax.findMove(boardstate, 6, current_player);
 				} else return new int[] {0,0};
 			}
 
@@ -135,6 +135,7 @@ public class Display extends JPanel implements ActionListener {
 						statDisplay.addToHistory(boardstate);
 						statDisplay.resetCurrentPosition();
 						customRedrawn = false;
+						statDisplay.highlight();
 						redrawBoard();
 					}
 				} catch (InterruptedException | ExecutionException e) {

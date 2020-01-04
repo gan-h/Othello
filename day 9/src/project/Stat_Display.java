@@ -35,7 +35,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		
 		back = new JButton("<");
 		back.addActionListener(this);
-		back.setBounds(67, 360, 45, 25);
+		back.setBounds(62, 360, 45, 25);
 		back.setContentAreaFilled(true);
 		back.setBorderPainted(false);
 		back.setForeground(Color.white);
@@ -44,7 +44,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		
 		forwards = new JButton(">");
 		forwards.addActionListener(this);
-		forwards.setBounds(118, 360, 45, 25);
+		forwards.setBounds(113, 360, 45, 25);
 		forwards.setContentAreaFilled(true);
 		forwards.setBorderPainted(false);
 		forwards.setForeground(Color.white);
@@ -52,7 +52,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		forwards.setBackground(new Color(26, 25, 23));
 		
 		jtp = new JTextPane();
-		jtp.setEditable(false);
+		jtp.setEditable(true);
 		jtp.setBackground(Color.DARK_GRAY);
 		jtp.setCaretColor(Color.white);
 		
@@ -128,6 +128,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		if(e.getActionCommand().equals("<")) {
 			if(current_position - 1 >= 0) current_position--;
 			display.redrawBoard(boardHistory.get(current_position));
+			highlight();
 			
 			
 		} 
@@ -136,8 +137,10 @@ public class Stat_Display extends JPanel implements ActionListener{
 			if(current_position + 1 <= boardHistory.size() - 1) current_position++;
 			if(current_position == boardHistory.size() - 1) {
 				display.redrawBoard();
+				highlight();
 			} else {
 				display.redrawBoard(boardHistory.get(current_position));
+				highlight();
 			}
 			
 		} 
@@ -147,12 +150,12 @@ public class Stat_Display extends JPanel implements ActionListener{
 		this.display = display;
 	}
 	
-	public void appendToPane(String msg, Color c)
-    {
+	public void appendToPane(String msg, Color c) {
 		StyledDocument doc = jtp.getStyledDocument();
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
+        
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_CENTER);
 
@@ -163,6 +166,36 @@ public class Stat_Display extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
     }
+	
+	public void highlight() {
+		if (current_position == 0) return; //Dont run if current_position is zero.
+		int len = jtp.getDocument().getLength();
+		StyledDocument doc = jtp.getStyledDocument();
+		SimpleAttributeSet sas = new SimpleAttributeSet();
+		StyleConstants.setBackground(sas, Color.DARK_GRAY);
+		doc.setCharacterAttributes(0, len, sas, false);
+	    StyleConstants.setBackground(sas, new Color(100,100,0));
+	    int start;
+	    int length;
+	    start = jtp.getText().indexOf(current_position + ".");
+	    System.out.println(jtp.getText());
+	    
+	    start -= ( current_position / 4 );
+	    if(current_position % 4 == 0) start += 1;
+	    
+	    
+	    if (current_position >= 10) {
+	    	length = 6;
+	    } else  { //     (current_position <= 9)
+	    	length = 5;
+	    }
+	    System.out.println("Start: " + start);
+	    doc.setCharacterAttributes(start, length, sas, false);
+	    
+	}
+	
+	
+	
 	
 	public void updatePieceLabels(Board board) {
 		int white = 0;
@@ -181,6 +214,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	public void addToHistory(Board board) {
 		boardHistory.add(board);
 		current_position++;
+		highlight();
 		
 	}
 	
