@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
 public class Display extends JPanel implements ActionListener {
-	private JButton[][] buttons;
+	protected JButton[][] buttons;
 	private Stat_Display statDisplay; //Designated variable for storing reference to statDisplay so that statDisplay may be influenced.
 	private Board boardstate;
 	private int current_player;
@@ -15,7 +15,16 @@ public class Display extends JPanel implements ActionListener {
 	private static int black = 2;
 	private JLabel[] numbers;
 	private JLabel[] letters;
+	private EndScreen endScreen;
+	boolean gameOver;
 	public Display() {        //Constructor overlays a button over every square in the grid
+		gameOver = false;
+		endScreen = new EndScreen();
+		endScreen.setBounds(152, 121, 182, 240);
+		endScreen.display = this;
+		endScreen.setVisible(false);
+		this.add(endScreen);
+		
 		boardstate = new Board();
 		current_player = white;
 		setLayout(null);
@@ -66,6 +75,7 @@ public class Display extends JPanel implements ActionListener {
 			letters[6] = new JLabel("g");
 			letters[7] = new JLabel("h");
 			
+			
 			for(int i = 0; i < 8; i++) {
 				letters[i].setBounds(0, 60 * i - 1, 9, 15);
 				numbers[i].setBounds(60 * i + 52, 467, 9, 9);
@@ -107,12 +117,13 @@ public class Display extends JPanel implements ActionListener {
 	boolean processing;
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		
 		if(customRedrawn == true) { //If the board was redrawn using the "<" or ">" button
 			redrawBoard(); //Redraw current board. 
 			customRedrawn = false; //Board is now the current "real" board, so set this flag to false.
 			statDisplay.resetCurrentPosition(); //Reset current_position to match the current board state. 
 			statDisplay.highlight(); //Update highlight so that it matches current_position
-			System.out.println("Just reset");
 			return; 
 		}
 		
@@ -120,6 +131,7 @@ public class Display extends JPanel implements ActionListener {
 		int x = Integer.parseInt(e.getActionCommand()) % 8; 
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
 		
+		checkIfGameOver();
 		
 		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
 			if(move[0] == y && move[1] == x && !processing) {
@@ -140,6 +152,7 @@ public class Display extends JPanel implements ActionListener {
 				
 			}
 		}
+		
 	}
 	
 	private void minimaxThread() { 
@@ -169,6 +182,7 @@ public class Display extends JPanel implements ActionListener {
 						customRedrawn = false;
 						statDisplay.highlight();
 						redrawBoard();
+						checkIfGameOver();
 					}
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
@@ -233,6 +247,7 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	public void newGame() {
+		gameOver = false;
 		Minimax.resetMinimaxMoveCount();
 		customRedrawn = false;
 		processing = false;
@@ -271,6 +286,36 @@ public class Display extends JPanel implements ActionListener {
 	public int getCurrentPlayer() {
 		return current_player;
 	}
+	
+	private void checkIfGameOver() {
+		if( gameOver != true ) {
+			if(boardstate.getLegalMoves(current_player).size() == 0) gameOver = true;
+			if(gameOver) {
+				int white = 0;
+				int black = 0;
+				for(int[] x : boardstate.getBoard()) {
+					for(int y : x) {
+						if(y == 1) white++;
+						if(y == 2) black++;
+					}
+				}
+				if(white > black) {
+					endScreen.result = 1;
+				}
+				
+				if(black > white) {
+					endScreen.result = 2;
+				}
+				
+				if(black == white) {
+					endScreen.result = 0;
+				}
+				
+				endScreen.setVisible(true);
+			}
+		}
+	}
+	
 	
 }
 

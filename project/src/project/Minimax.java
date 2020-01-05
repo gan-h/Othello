@@ -7,7 +7,7 @@ public class Minimax {
 	final static int black = 2;
 	static int totalSearched = 0;
 	public static int[] findMove(Board board, int depth, int player) {
-		int[] final_move = new int[1]; //Is left as [0] if there are no moves found.
+		int[] final_move = new int[1]; //final_move is left as [0] if there are no moves found.
 		
 		if(player == white) {
 			totalSearched++;

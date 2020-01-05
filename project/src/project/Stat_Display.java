@@ -53,6 +53,8 @@ public class Stat_Display extends JPanel implements ActionListener{
 		UpArrow.setContentAreaFilled(false);
 		UpArrow.setBorderPainted(false);
 		
+		
+		
 		difficultyLabel = new JLabel("Difficulty: " + difficultySetting);
 		difficultyLabel.setBounds(80, 105, 200, 31);
 		difficultyLabel.setForeground(Color.white);
