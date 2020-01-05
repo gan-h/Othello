@@ -8,10 +8,23 @@ How to run this program:
 - - Replace the .class files in bin/project with the newly compiled java files 
 - - Run: "java project.Drawboard" (be sure to be in the bin folder, and that you are only in the bin folder, not in the bin/projects folder)
 
-<i>This program is JRE 1.7 and above compliant.</i>
+<i>This program is JRE 1.7 - JRE 10 compatible</i>
+
+<b>--------------------------------------------------------------------------------------------------------------------------</b>
+
+To Do:
+- Add a analytics system to display W/L ratio.
+- Add an analysis system that shows board evaluations throughout the game after the user wins or loses against AI
+- Add random computer player
+- Add Jonalf Dyrland Weaver into the game
+- Add beta alpha pruning to the minimax algorithm.
+
+<b>--------------------------------------------------------------------------------------------------------------------------</b>
 
 
 Development Log:
+Winter Break:
+
 Day 1: 
 - finished legal move detection system
 - finished move update system.
@@ -71,8 +84,14 @@ Day 10:
 
 Day 11: 
 - Figured out how to compile without using eclipse.
-Day 11: 
 - Updated image paths so that we can compile the program without the images breaking.
+
+Ever since school started:
+
+1/4/20 :
+- Made pixel art for settings wheel
+- Added a settings menu
+- Added a up and down button in the settings menu for adjusting Minimax depth
 
 
 
