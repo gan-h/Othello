@@ -15,17 +15,66 @@ public class Stat_Display extends JPanel implements ActionListener{
 	private Display display; //This holds a reference to the active instance of "display" so that we can influence it
 	private ArrayList<Board> boardHistory; //ArrayList reference for board state storage
 	private int current_position; //This records which move the user is currently observing.
+	private boolean insideSettings;
+	public int difficultySetting;
+	JButton UpArrow;
+	JButton DownArrow;
 	JButton newGame;
 	JButton back;
 	JButton forwards;
 	JButton hint;
+	JButton settings;
 	JLabel hinter;
 	JLabel whiteCount;
 	JLabel blackCount;
+	JLabel difficultyLabel;
 	JTextPane jtp;
 	JScrollPane jsp;
 	
+	@Override
+	public Dimension getPreferredSize() { //Specifies the size of the panel. This is important for the JFrame.
+		return new Dimension(220, 480);
+	}
+	
 	Stat_Display(){
+		insideSettings = false; //Has the user selected settings?
+		difficultySetting = 3;
+		
+		UpArrow = new JButton(new ImageIcon(this.getClass().getResource("/UpArrow.png")));
+		DownArrow = new JButton(new ImageIcon(this.getClass().getResource("/DownArrow.png")));
+		UpArrow.setActionCommand("UpArrow");
+		DownArrow.setActionCommand("DownArrow");
+		UpArrow.addActionListener(this);
+		DownArrow.addActionListener(this);
+		UpArrow.setBounds(50, 100, 21, 21);
+		DownArrow.setBounds(50, 121, 21, 21);
+		DownArrow.setContentAreaFilled(false);
+		DownArrow.setBorderPainted(false);
+		UpArrow.setContentAreaFilled(false);
+		UpArrow.setBorderPainted(false);
+		
+		difficultyLabel = new JLabel("Difficulty: " + difficultySetting);
+		difficultyLabel.setBounds(80, 105, 200, 31);
+		difficultyLabel.setForeground(Color.white);
+		
+		this.add(difficultyLabel);
+		this.add(DownArrow);
+		this.add(UpArrow);
+		
+		difficultyLabel.setVisible(false);
+		DownArrow.setVisible(false);
+		UpArrow.setVisible(false);
+		
+		
+		settings = new JButton();
+		settings.setIcon((new ImageIcon(this.getClass().getResource("/settings.png"))));
+		settings.setActionCommand("Settings");
+		settings.addActionListener(this);
+		settings.setBounds(0,0,22,22);
+		settings.setContentAreaFilled(false);
+		settings.setBorderPainted(false);
+		settings.setFocusPainted(false);
+		
 		setLayout(null);
 		setBackground(new Color(39,37,34));
 	
@@ -129,12 +178,12 @@ public class Stat_Display extends JPanel implements ActionListener{
 		this.add(back);
 		this.add(hint);
 		this.add(hinter);
+		this.add(settings);
 		
 	}
-	@Override
-	public Dimension getPreferredSize() { //Specifies the size of the panel. This is important for the JFrame.
-		return new Dimension(220, 480);
-	}
+
+	
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) { //Action event handler
@@ -184,7 +233,42 @@ public class Stat_Display extends JPanel implements ActionListener{
 				generateHint();
 				hintJustClicked = false;
 			}
-			
+		}
+		
+		if(e.getActionCommand().equals("Settings")) {
+			Component[] settingComponents = {UpArrow, DownArrow, difficultyLabel, settings};
+			insideSettings = !insideSettings;
+			System.out.println(insideSettings);
+			if(insideSettings) { //if user has selected settings
+				Component[] components = this.getComponents();
+				for (int i=0; i < components.length; i++)
+					components[i].setVisible(false);
+				for(Component x : settingComponents) {
+					x.setVisible(true);
+				}
+			} else { //if the user has exited settings, re-add all components to the model
+				Component[] components = this.getComponents();
+				for (int i=0; i < components.length; i++) {
+					components[i].setVisible(true);
+				}
+				for(Component x : settingComponents) {
+					if(x.equals(settings)) continue;
+					x.setVisible(false);
+				}
+			}
+		}
+		
+		if(e.getActionCommand().equals("UpArrow")) {
+			System.out.println("Hello");
+			if(difficultySetting + 1 <= 6) difficultySetting += 1;
+			if(difficultySetting == 6) difficultyLabel.setText("Difficulty: " + difficultySetting + " (pro)");
+			else difficultyLabel.setText("Difficulty: " + difficultySetting);
+		}
+		
+		if(e.getActionCommand().equals("DownArrow")) {
+			if(difficultySetting - 1 > 0) difficultySetting -= 1;
+			if(difficultySetting == 1) difficultyLabel.setText("Difficulty: " + difficultySetting + " (noob)");
+			else difficultyLabel.setText("Difficulty: " + difficultySetting);
 			
 		}
 	}

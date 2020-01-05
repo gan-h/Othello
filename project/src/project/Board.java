@@ -33,7 +33,7 @@ public class Board {
 	}
 	public ArrayList<int[]> getLegalMoves(int player) {
 		int opposite = getOppositePlayer(player);
-		ArrayList<int[]> output = new ArrayList<int[]>(20);
+		ArrayList<int[]> output = new ArrayList<int[]>(40);
 		for(int y = 0; y < boardstate.length; y++) {
 			outerloop:
 			for(int x = 0; x < boardstate[y].length; x++) {

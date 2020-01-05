@@ -148,7 +148,7 @@ public class Display extends JPanel implements ActionListener {
 			@Override
 			protected int[] doInBackground() throws Exception { 
 				if(!canceled) { //If user did not click "New Game", do this:
-				return Minimax.findMove(boardstate, 6, current_player);
+				return Minimax.findMove(boardstate, statDisplay.difficultySetting, current_player);
 				} else return new int[] {-1, -1}; //This is just here because there must be something returned. This code is never going to affect anything.
 			}
 
