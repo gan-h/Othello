@@ -11,6 +11,7 @@ How to run this program:
 <i>This program is JRE 1.7 and above compliant.</i>
 
 <b>--------------------------------------------------------------------------------------------------------------------------</b>
+
 To Do:
 - Add a analytics system to display W/L ratio.
 - Add an analysis system that shows board evaluations throughout the game after the user wins or loses against AI
