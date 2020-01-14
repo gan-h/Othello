@@ -8,7 +8,7 @@ How to run this program:
 - - Replace the .class files in bin/project with the newly compiled java files 
 - - Run: "java project.Drawboard" (be sure to be in the bin folder, and that you are only in the bin folder, not in the bin/projects folder)
 
-<i>This program is JRE 1.7 - JRE 10 compatible</i>
+<i>This program is JRE 1.7+ compatible</i>
 
 <b>--------------------------------------------------------------------------------------------------------------------------</b>
 
