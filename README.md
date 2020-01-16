@@ -93,6 +93,9 @@ Ever since school started:
 - Added a settings menu
 - Added a up and down button in the settings menu for adjusting Minimax depth
 
+1/15/20:
+-Added option to play human
+-Added analysis functionality.
 
 
 
