@@ -16,13 +16,18 @@ public class EndScreen extends JPanel implements ActionListener {
 	protected int result;
 	private JButton exit;
 	private JLabel outcome;
+	private JButton analysis;
 	
-	public EndScreen() {
+	public EndScreen(Display display) {
+		this.display = display;
+		
 		
 		this.setLayout(null);
 		this.setBackground(new Color(26, 25, 23));
+		
 		outcome = new JLabel();
 		outcome.setBounds(49, 50, 100, 30);
+		
 		exit = new JButton();
 		exit.setBounds(5,5,18,18);
 		exit.setActionCommand("Exit");
@@ -32,7 +37,15 @@ public class EndScreen extends JPanel implements ActionListener {
 		exit.setBorderPainted(false);
 		exit.setFocusPainted(false);
 		
+		analysis = new JButton();
+		analysis.setActionCommand("Analysis");
+		analysis.setBounds(17, 115, 147, 33);
+		analysis.addActionListener(display);
+		analysis.setContentAreaFilled(false);
+		analysis.setBorderPainted(false);
+		analysis.setFocusPainted(false);
 		
+		this.add(analysis);
 		this.add(outcome);
 		this.add(exit);
 		
@@ -51,7 +64,6 @@ public class EndScreen extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("Exit")) {
 			this.setVisible(false);
-			 display.redrawBoard();
 		}
 	}
 	

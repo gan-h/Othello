@@ -29,8 +29,9 @@ public class Drawboard extends JFrame {
 		display.setBounds(0, 0, 480, 480);
 		statDisplay.setBounds(480, 0, 220, 480);
 		statDisplay.setDisplay(display);
-		frame.add(display);
 		frame.add(statDisplay);
+		frame.add(display);
+		
 		frame.setVisible(true);
 	}
 	

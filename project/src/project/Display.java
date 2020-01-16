@@ -10,24 +10,35 @@ public class Display extends JPanel implements ActionListener {
 	private Stat_Display statDisplay; //Designated variable for storing reference to statDisplay so that statDisplay may be influenced.
 	private Board boardstate;
 	private int current_player;
-	private static int empty = 0;
-	private static int white = 1;
-	private static int black = 2;
-	private JLabel[] numbers;
-	private JLabel[] letters;
+	private final int empty = 0;
+	private final int white = 1;
+	private final int black = 2;
+	private JLabel[] numbers, letters;
 	private EndScreen endScreen;
+	private Analysis analysis;
+	
+	public static int totalMovesMade = 0;
+	
 	boolean gameOver;
 	public Display() {        //Constructor overlays a button over every square in the grid
 		gameOver = false;
-		endScreen = new EndScreen();
+		System.out.println(this);
+		endScreen = new EndScreen(this);
 		endScreen.setBounds(152, 121, 182, 240);
-		endScreen.display = this;
 		endScreen.setVisible(false);
 		this.add(endScreen);
+
 		
 		boardstate = new Board();
 		current_player = white;
 		setLayout(null);
+		
+		analysis = new Analysis(statDisplay, this);
+		analysis.setBounds(0, 0, 480, 480);
+		this.add(analysis);
+		analysis.setVisible(false);
+		
+		
 		buttons = new JButton[8][8];
 		numbers = new JLabel[8];
 		letters = new JLabel[8];
@@ -83,6 +94,8 @@ public class Display extends JPanel implements ActionListener {
 				this.add(letters[i]);
 			}
 		}
+		
+		
 		repaint();
 	}
 	@Override
@@ -117,7 +130,12 @@ public class Display extends JPanel implements ActionListener {
 	boolean processing;
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		if(e.getActionCommand().equals("Analysis")) {
+			endScreen.setVisible(false);
+			analysis.setVisible(true);
+			analysis.beginAnalysis(statDisplay.boardHistory);
+			return;
+		}
 		
 		if(customRedrawn == true) { //If the board was redrawn using the "<" or ">" button
 			redrawBoard(); //Redraw current board. 
@@ -140,18 +158,29 @@ public class Display extends JPanel implements ActionListener {
 				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
 				canceled = false; 
 				processing = true;
-				statDisplay.resetHinterLabel();
-				statDisplay.appendToPane(getMoveString(x, y), Color.white);
+				totalMovesMade += 1;
+				statDisplay.hinter.setText(""); //A move has been made, so clear the hint text.
+				if(totalMovesMade % 2 == 1) {
+					statDisplay.appendToPane(getMoveString(x, y), Color.white);
+				} else {
+					statDisplay.appendToPane(getMoveString(x, y), Color.red);
+				}
+				
 				boardstate = boardstate.makeMove(current_player, move);
 				redrawBoard();
 				statDisplay.updatePieceLabels(boardstate);
 				statDisplay.addToHistory(boardstate);
 				current_player = oppositePlayer(current_player);			
-				minimaxThread();
+				if(statDisplay.playTheHuman == false) {
+					minimaxThread();
+				} else {
+					processing = false;
+				}
+				checkIfGameOver();
 				break;
-				
 			}
 		}
+		
 		
 	}
 	
@@ -170,10 +199,11 @@ public class Display extends JPanel implements ActionListener {
 				processing = false;
 				try {
 					if(!canceled) {
+						totalMovesMade += 1;
 						Minimax.resetMinimaxMoveCount();
 						int[] output_move = get(); //sets output_move to what doInBackground() eventually returns
 						if(output_move.length < 2) return;
-						statDisplay.appendToPane(getMoveString(output_move[1], output_move[0]), Color.red);
+						statDisplay.appendToPane(getMoveString(output_move[1], output_move[0]), Color.green);
 						boardstate = boardstate.makeMove(current_player, output_move);
 						statDisplay.updatePieceLabels(boardstate);
 						current_player = oppositePlayer(current_player);
@@ -247,6 +277,9 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	public void newGame() {
+		totalMovesMade = 0;
+		endScreen.setVisible(false);
+		analysis.setVisible(false);
 		gameOver = false;
 		Minimax.resetMinimaxMoveCount();
 		customRedrawn = false;
@@ -277,6 +310,7 @@ public class Display extends JPanel implements ActionListener {
 			return (" " + total_moves++ + ". " + matches[y] + x + "\n");
 		}
 	}
+	
 	public void setCustomFlagState(boolean state) {
 		customRedrawn = state;
 	}

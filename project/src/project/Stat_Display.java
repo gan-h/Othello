@@ -13,21 +13,15 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class Stat_Display extends JPanel implements ActionListener{
 	private Display display; //This holds a reference to the active instance of "display" so that we can influence it
-	private ArrayList<Board> boardHistory; //ArrayList reference for board state storage
+	public ArrayList<Board> boardHistory; //ArrayList reference for board state storage
 	private int current_position; //This records which move the user is currently observing.
 	private boolean insideSettings;
+	public boolean playTheHuman;
 	public int difficultySetting;
-	JButton UpArrow;
-	JButton DownArrow;
-	JButton newGame;
-	JButton back;
-	JButton forwards;
-	JButton hint;
-	JButton settings;
-	JLabel hinter;
-	JLabel whiteCount;
-	JLabel blackCount;
-	JLabel difficultyLabel;
+	JButton UpArrow, DownArrow;
+	JButton playHuman;
+	JButton back, forwards, hint, settings, newGame;
+	JLabel whiteCount, blackCount, difficultyLabel, hinter, humanLabel;
 	JTextPane jtp;
 	JScrollPane jsp;
 	
@@ -38,6 +32,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	
 	Stat_Display(){
 		insideSettings = false; //Has the user selected settings?
+		playTheHuman = false; //User selects human or computer to play using this boolean.
 		difficultySetting = 3;
 		
 		UpArrow = new JButton(new ImageIcon(this.getClass().getResource("/UpArrow.png")));
@@ -53,7 +48,16 @@ public class Stat_Display extends JPanel implements ActionListener{
 		UpArrow.setContentAreaFilled(false);
 		UpArrow.setBorderPainted(false);
 		
+		playHuman = new JButton(new ImageIcon(this.getClass().getResource("/UpArrow.png")));
+		playHuman.setBounds(50, 181, 21, 21);
+		playHuman.setContentAreaFilled(false);
+		playHuman.setBorderPainted(false);
+		playHuman.setActionCommand("playHuman");
+		playHuman.addActionListener(this);
 		
+		humanLabel = new JLabel("Playing Computer");
+		humanLabel.setBounds(80, 180, 200, 31);
+		humanLabel.setForeground(Color.white);
 		
 		difficultyLabel = new JLabel("Difficulty: " + difficultySetting);
 		difficultyLabel.setBounds(80, 105, 200, 31);
@@ -62,11 +66,18 @@ public class Stat_Display extends JPanel implements ActionListener{
 		this.add(difficultyLabel);
 		this.add(DownArrow);
 		this.add(UpArrow);
+		this.add(humanLabel);
+		this.add(playHuman);
 		
 		difficultyLabel.setVisible(false);
 		DownArrow.setVisible(false);
 		UpArrow.setVisible(false);
+		humanLabel.setVisible(false);
+		playHuman.setVisible(false);
 		
+		//End of settings ^
+		
+		//Start of non-setting menu:
 		
 		settings = new JButton();
 		settings.setIcon((new ImageIcon(this.getClass().getResource("/settings.png"))));
@@ -92,7 +103,6 @@ public class Stat_Display extends JPanel implements ActionListener{
 		newGame.setBorderPainted(false);
 		newGame.setForeground(Color.white);
 		newGame.setFocusPainted(false);
-		
 		
 		hint = new JButton("?");
 		hint.addActionListener(this);
@@ -140,6 +150,9 @@ public class Stat_Display extends JPanel implements ActionListener{
 		jsp.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
 		
 		jsp.getVerticalScrollBar().setUI(new BasicScrollBarUI()    //Overriding default settings for the scroll bar look
+				
+		
+				
 	    {   
 			@Override
 		    protected void configureScrollBarColors() {
@@ -201,10 +214,12 @@ public class Stat_Display extends JPanel implements ActionListener{
 		if(e.getActionCommand().equals("<")) { //If the back button was clicked, then do this:
 			if(current_position - 1 >= 0) current_position--;
 			if(current_position == boardHistory.size() - 1) {
+				updatePieceLabels(boardHistory.get(current_position));
 				display.setCustomFlagState(false);
 				display.redrawBoard();
 				highlight();
 			} else {
+				updatePieceLabels(boardHistory.get(current_position));
 				display.setCustomFlagState(true);
 				display.redrawBoard(boardHistory.get(current_position));
 				highlight();
@@ -216,10 +231,12 @@ public class Stat_Display extends JPanel implements ActionListener{
 		if(e.getActionCommand().equals(">")) { //If the forwards button was clicked, then do this:
 			if(current_position + 1 <= boardHistory.size() - 1) current_position++;
 			if(current_position == boardHistory.size() - 1) {
+				updatePieceLabels(boardHistory.get(current_position));
 				display.setCustomFlagState(false);
 				display.redrawBoard();
 				highlight();
 			} else {
+				updatePieceLabels(boardHistory.get(current_position));
 				display.setCustomFlagState(true);
 				display.redrawBoard(boardHistory.get(current_position));
 				highlight();
@@ -237,8 +254,8 @@ public class Stat_Display extends JPanel implements ActionListener{
 			}
 		}
 		
-		if(e.getActionCommand().equals("Settings")) {
-			Component[] settingComponents = {UpArrow, DownArrow, difficultyLabel, settings};
+		if(e.getActionCommand().equals("Settings")) { //Responsible for controlling the visibility of non-setting, and setting components.
+			Component[] settingComponents = {UpArrow, DownArrow, difficultyLabel, settings, humanLabel, playHuman};
 			insideSettings = !insideSettings;
 			System.out.println(insideSettings);
 			if(insideSettings) { //if user has selected settings
@@ -272,6 +289,18 @@ public class Stat_Display extends JPanel implements ActionListener{
 			if(difficultySetting == 1) difficultyLabel.setText("Difficulty: " + difficultySetting + " (noob)");
 			else difficultyLabel.setText("Difficulty: " + difficultySetting);
 			
+		}
+		
+		if(e.getActionCommand().equals("playHuman")) {
+			System.out.println("sad" + playTheHuman);
+			playTheHuman = !playTheHuman;
+			if(playTheHuman) {
+				humanLabel.setText("Playing Human");
+				difficultyLabel.setForeground(Color.black);
+			} else {
+				humanLabel.setText("Playing Computer");
+				difficultyLabel.setForeground(Color.white);
+			}
 		}
 	}
 	
@@ -351,9 +380,6 @@ public class Stat_Display extends JPanel implements ActionListener{
 		current_position = boardHistory.size() - 1;
 	}
 	
-	public void resetHinterLabel() {
-		hinter.setText("");
-	}
 	
 	private void generateHint() { 
 		SwingWorker<int[], Void> minimax = new SwingWorker<int[], Void>(){
