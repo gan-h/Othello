@@ -228,6 +228,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		
 		
 		if(e.getActionCommand().equals("New Game")) { //If new game button is clicked, then do this:
+			analysisEye.setVisible(false);
 			display.newGame();
 			jtp.setText("");
 			display.total_moves = 1;
