@@ -70,10 +70,16 @@ public class Analysis extends JPanel implements ActionListener {
 		XTick = GraphLength / boardHistory.size();
 		
 		int XLength = ((480 - GraphLength) / 2);
-		ypoints = null;
-		labels = null;
+		if(labels != null) {
+			for(int i = 0; i < labels.length; i++) {
+				this.remove(labels[i]);
+				
+			}
+		}
+		
 		labels = new JLabel[boardHistory.size()];
 		ypoints = new int[boardHistory.size()];
+		
 		
 		//Setup x-axis ticks
 		int pos = 0;
@@ -84,7 +90,7 @@ public class Analysis extends JPanel implements ActionListener {
 			labels[pos].setIcon(new ImageIcon(this.getClass().getResource("/bars.png")));
 			this.add(labels[pos]);
 			pos++;
-			System.out.println(pos);
+			
 		}
 		
 		//Add points
@@ -139,7 +145,7 @@ public class Analysis extends JPanel implements ActionListener {
 	}
 	
 	public void updateLabels() {
-		System.out.println("Wassup");
+		
 		evaluationLabel.setText("Evaluation: " + ypoints[statDisplay.current_position]);
 		moveLabel.setText("Move #: " + statDisplay.current_position);
 	}

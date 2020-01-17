@@ -219,7 +219,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) { //Action event handler
 		if(e.getActionCommand().equals("AnalysisEye")) {
 			if(analysis != null) {
-				System.out.println("hello");
+				
 				analysis.setVisible(!analysis.isVisible());
 				return;
 			}
@@ -250,7 +250,8 @@ public class Stat_Display extends JPanel implements ActionListener{
 				highlight();
 			}
 			
-			if(analysis != null) {
+			if(analysis != null) { //If the analysis screen is on, then redraw its graphics everytime this button is clicked
+				//Repainting is needed to update the position of the red bar.
 				
 				analysis.repaint();
 				analysis.updateLabels();
@@ -271,15 +272,15 @@ public class Stat_Display extends JPanel implements ActionListener{
 				display.redrawBoard(boardHistory.get(current_position));
 				highlight();
 			}
-			if(analysis != null) {
-				
+			if(analysis != null) { //If the analysis screen is on, then redraw its graphics everytime this button is clicked
+				//Repainting is needed to update the position of the red bar.
 				analysis.repaint();
 				analysis.updateLabels();
 			}
 		}
 		
 		boolean hintJustClicked = false;
-		if(e.getActionCommand().equals("?")) {
+		if(e.getActionCommand().equals("?")) { //Generates hints on click
 			if(!hintJustClicked) {
 				hintJustClicked = true;
 				hinter.setText("Generating a hint for you!");
@@ -291,7 +292,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		if(e.getActionCommand().equals("Settings")) { //Responsible for controlling the visibility of non-setting, and setting components.
 			Component[] settingComponents = {UpArrow, DownArrow, difficultyLabel, settings, humanLabel, playHuman};
 			insideSettings = !insideSettings;
-			System.out.println(insideSettings);
+			
 			if(insideSettings) { //if user has selected settings
 				Component[] components = this.getComponents();
 				for (int i=0; i < components.length; i++)
@@ -311,8 +312,8 @@ public class Stat_Display extends JPanel implements ActionListener{
 			}
 		}
 		
-		if(e.getActionCommand().equals("UpArrow")) {
-			System.out.println("Hello");
+		if(e.getActionCommand().equals("UpArrow")) { //UpArrow controls computer depth
+			
 			if(difficultySetting + 1 <= 6) difficultySetting += 1;
 			if(difficultySetting == 6) difficultyLabel.setText("Difficulty: " + difficultySetting + " (pro)");
 			else difficultyLabel.setText("Difficulty: " + difficultySetting);
@@ -325,8 +326,8 @@ public class Stat_Display extends JPanel implements ActionListener{
 			
 		}
 		
-		if(e.getActionCommand().equals("playHuman")) {
-			System.out.println("sad" + playTheHuman);
+		if(e.getActionCommand().equals("playHuman")) { //Down arrow controls computer dpeth
+			
 			playTheHuman = !playTheHuman;
 			if(playTheHuman) {
 				humanLabel.setText("Playing Human");
@@ -389,7 +390,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 	
 	
 	
-	public void updatePieceLabels(Board board) {
+	public void updatePieceLabels(Board board) { //Used by Display for updating the board pieces.
 		int white = 0;
 		int black = 0;
 		for(int[] y : board.getBoard()) {
@@ -403,7 +404,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		blackCount.setText("Black Pieces: " + black);
 	}
 	
-	public void addToHistory(Board board) {
+	public void addToHistory(Board board) { //Used by Display for adding its boardstate arrays to the master history arraylist
 		boardHistory.add(board);
 		current_position++;
 		highlight();

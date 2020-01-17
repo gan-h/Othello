@@ -8,43 +8,40 @@ import javax.swing.*;
 public class Display extends JPanel implements ActionListener {
 	protected JButton[][] buttons;
 	private Stat_Display statDisplay; //Designated variable for storing reference to statDisplay so that statDisplay may be influenced.
-	private Board boardstate;
-	private int current_player;
-	private final int empty = 0;
+	private Board boardstate; //Holds the most current state of the board
+	private int current_player; //Used for determining which player's turn it is
+	private final int empty = 0; 
 	private final int white = 1;
 	private final int black = 2;
-	private JLabel[] numbers, letters;
-	private EndScreen endScreen;
-	private Analysis analysis;
+	private JLabel[] numbers, letters; //The number/letter markings on the board
+	private EndScreen endScreen; //Used for referring to an EndScreen instance
+	private Analysis analysis; //Used for referring to an analysis instance.
 	
 	public static int totalMovesMade = 0;
 	
-	boolean gameOver;
+	boolean gameOver; //Has the game reached a finishing position?
 	public Display(Stat_Display statDisplay) {        //Constructor overlays a button over every square in the grid
-		this.statDisplay = statDisplay;
+		current_player = white;
+		setLayout(null);
+		boardstate = new Board();
+		this.statDisplay = statDisplay; //initialize statDisplay using the reference passed by Drawboard
+		gameOver = false; 
 		
-		gameOver = false;
-		
-		endScreen = new EndScreen(this);
+		endScreen = new EndScreen(this); 
 		endScreen.setBounds(152, 121, 182, 240);
 		endScreen.setVisible(false);
 		this.add(endScreen);
 
-		
-		boardstate = new Board();
-		current_player = white;
-		setLayout(null);
-		
 		analysis = new Analysis(statDisplay, this);
 		analysis.setBounds(0, 0, 480, 480);
 		analysis.setVisible(false);
 		this.add(analysis); //just changed
 		
-		
 		buttons = new JButton[8][8];
 		numbers = new JLabel[8];
 		letters = new JLabel[8];
-		for(int y = 0; y < 8; y++) {
+		
+		for(int y = 0; y < 8; y++) { //Set the buttons to pictures of each piece based on boardstate's array.
 			for(int x = 0; x < 8; x ++) {
 				 if(boardstate.getBoard()[y][x] == empty) {
 						buttons[y][x] = new JButton(); 
@@ -70,6 +67,7 @@ public class Display extends JPanel implements ActionListener {
 				 
 				
 			}
+			//Intialize labels in number and letter list.
 			numbers[0] = new JLabel("1");
 			numbers[1] = new JLabel("2");
 			numbers[2] = new JLabel("3");
@@ -88,7 +86,7 @@ public class Display extends JPanel implements ActionListener {
 			letters[6] = new JLabel("g");
 			letters[7] = new JLabel("h");
 			
-			
+			//Set the labels to their positions.
 			for(int i = 0; i < 8; i++) {
 				letters[i].setBounds(0, 60 * i - 1, 9, 15);
 				numbers[i].setBounds(60 * i + 52, 467, 9, 9);
@@ -97,7 +95,7 @@ public class Display extends JPanel implements ActionListener {
 			}
 		}
 		
-		
+		//Draw the graphics for the Othello board.
 		repaint();
 	}
 	@Override
@@ -133,11 +131,11 @@ public class Display extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getActionCommand().equals("Analysis")) {
-			endScreen.setVisible(false);
-			statDisplay.analysis = analysis;
-			analysis.setVisible(true);
-			analysis.beginAnalysis(statDisplay.boardHistory);
+		if(e.getActionCommand().equals("Analysis")) { //Has the analysis button on the endScreen just been clicked?
+			endScreen.setVisible(false); //Make the endScreen disappear
+			statDisplay.analysis = analysis; //Give a reference of the analysis screen to statDisplay now that the player has chosen analysis
+			analysis.setVisible(true); //make the analysis screen appear
+			analysis.beginAnalysis(statDisplay.boardHistory); //Tell the analysis screen to start the analysis.
 			return;
 		}
 		
@@ -153,34 +151,33 @@ public class Display extends JPanel implements ActionListener {
 		int x = Integer.parseInt(e.getActionCommand()) % 8; 
 		int y = ( Integer.parseInt(e.getActionCommand()) - x ) / 8;
 		
-		checkIfGameOver();
-		
 		for(int[] move: boardstate.getLegalMoves(current_player)) { //Check if button clicked was a legal move. If legal, make move and update board.
 			if(move[0] == y && move[1] == x && !processing) {
 				
 				//When cancelled is set to false, minimaxThread will update the board after computing 
 				//When cancelled is set to true, minimaxThread will NOT update the board after computing 
 				canceled = false; 
-				processing = true;
+				processing = true; //boolean to prevent any new moves from being handled.
 				totalMovesMade += 1;
 				statDisplay.hinter.setText(""); //A move has been made, so clear the hint text.
-				if(totalMovesMade % 2 == 1) {
+				if(totalMovesMade % 2 == 1) { //Output console text formatting (Makes white have white color, black have red color)
 					statDisplay.appendToPane(getMoveString(x, y), Color.white);
 				} else {
 					statDisplay.appendToPane(getMoveString(x, y), Color.red);
 				}
 				
-				boardstate = boardstate.makeMove(current_player, move);
-				redrawBoard();
-				statDisplay.updatePieceLabels(boardstate);
+				boardstate = boardstate.makeMove(current_player, move); //Update the boardstate array now that a new move has been made.
+				redrawBoard(); //redraw the now that boardstate's array has been changed.
+				statDisplay.updatePieceLabels(boardstate); //update piece counts
 				statDisplay.addToHistory(boardstate);
-				current_player = oppositePlayer(current_player);			
-				if(statDisplay.playTheHuman == false) {
-					minimaxThread();
+				current_player = oppositePlayer(current_player); //Player just made a move, now its the other player's turn			
+				
+				if(statDisplay.playTheHuman == false) { //if the user chose to play the computer:
+					minimaxThread(); //handles minimax logic and board updating
 				} else {
-					processing = false;
+					processing = false; //finished making the move, so set processing to false to allow for new move processing
 				}
-				checkIfGameOver();
+				checkIfGameOver(); //did the move made just now cause the game to end?
 				break;
 			}
 		}
@@ -280,7 +277,7 @@ public class Display extends JPanel implements ActionListener {
 		
 	}
 	
-	public void newGame() {
+	public void newGame() { //Logic for restarting the program for a new game.
 		totalMovesMade = 0;
 		endScreen.setVisible(false);
 		analysis.setVisible(false);
@@ -301,7 +298,7 @@ public class Display extends JPanel implements ActionListener {
 	}
 	
 	public int total_moves = 1;
-	private String getMoveString(int x, int y) {
+	private String getMoveString(int x, int y) { //Converts grid number to letters with the appropriate formatting for the console.
 		x++;
 		String[] matches = {"a", "b", "c", "d", "e", "f", "g", "h"};
 		if(total_moves >= 10 && total_moves % 4 == 0) {
@@ -325,7 +322,7 @@ public class Display extends JPanel implements ActionListener {
 		return current_player;
 	}
 	
-	private void checkIfGameOver() {
+	private void checkIfGameOver() { //Has the game finished?
 		if( gameOver != true ) {
 			if(boardstate.getLegalMoves(current_player).size() == 0) gameOver = true;
 			if(gameOver) {
