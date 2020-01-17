@@ -32,7 +32,6 @@ public class Minimax {
 				if (previous != minEval) final_move = move;
 			}
 			
-			System.out.println(totalSearched);
 		}
 		
 		return final_move;

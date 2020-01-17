@@ -14,13 +14,16 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 public class Stat_Display extends JPanel implements ActionListener{
 	private Display display; //This holds a reference to the active instance of "display" so that we can influence it
 	public ArrayList<Board> boardHistory; //ArrayList reference for board state storage
-	private int current_position; //This records which move the user is currently observing.
+	public int current_position; //This records which move the user is currently observing.
 	private boolean insideSettings;
 	public boolean playTheHuman;
 	public int difficultySetting;
+	public Analysis analysis;
+	
+	
 	JButton UpArrow, DownArrow;
 	JButton playHuman;
-	JButton back, forwards, hint, settings, newGame;
+	JButton back, forwards, hint, settings, newGame, analysisEye;
 	JLabel whiteCount, blackCount, difficultyLabel, hinter, humanLabel;
 	JTextPane jtp;
 	JScrollPane jsp;
@@ -47,6 +50,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 		DownArrow.setBorderPainted(false);
 		UpArrow.setContentAreaFilled(false);
 		UpArrow.setBorderPainted(false);
+		
 		
 		playHuman = new JButton(new ImageIcon(this.getClass().getResource("/UpArrow.png")));
 		playHuman.setBounds(50, 181, 21, 21);
@@ -87,6 +91,17 @@ public class Stat_Display extends JPanel implements ActionListener{
 		settings.setContentAreaFilled(false);
 		settings.setBorderPainted(false);
 		settings.setFocusPainted(false);
+		
+		analysisEye = new JButton();
+		analysisEye.setIcon((new ImageIcon(this.getClass().getResource("/Eye.png"))));
+		analysisEye.setActionCommand("AnalysisEye");
+		analysisEye.addActionListener(this);
+		analysisEye.setBounds(0,24,22,22);
+		analysisEye.setContentAreaFilled(false);
+		analysisEye.setBorderPainted(false);
+		analysisEye.setFocusPainted(false);
+		this.add(analysisEye);
+		analysisEye.setVisible(false);
 		
 		setLayout(null);
 		setBackground(new Color(39,37,34));
@@ -202,6 +217,15 @@ public class Stat_Display extends JPanel implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) { //Action event handler
+		if(e.getActionCommand().equals("AnalysisEye")) {
+			if(analysis != null) {
+				System.out.println("hello");
+				analysis.setVisible(!analysis.isVisible());
+				return;
+			}
+			
+		}
+		
 		
 		if(e.getActionCommand().equals("New Game")) { //If new game button is clicked, then do this:
 			display.newGame();
@@ -225,6 +249,11 @@ public class Stat_Display extends JPanel implements ActionListener{
 				highlight();
 			}
 			
+			if(analysis != null) {
+				
+				analysis.repaint();
+				analysis.updateLabels();
+			}
 			
 		} 
 		
@@ -241,7 +270,11 @@ public class Stat_Display extends JPanel implements ActionListener{
 				display.redrawBoard(boardHistory.get(current_position));
 				highlight();
 			}
-			
+			if(analysis != null) {
+				
+				analysis.repaint();
+				analysis.updateLabels();
+			}
 		}
 		
 		boolean hintJustClicked = false;

@@ -20,9 +20,11 @@ public class Display extends JPanel implements ActionListener {
 	public static int totalMovesMade = 0;
 	
 	boolean gameOver;
-	public Display() {        //Constructor overlays a button over every square in the grid
+	public Display(Stat_Display statDisplay) {        //Constructor overlays a button over every square in the grid
+		this.statDisplay = statDisplay;
+		
 		gameOver = false;
-		System.out.println(this);
+		
 		endScreen = new EndScreen(this);
 		endScreen.setBounds(152, 121, 182, 240);
 		endScreen.setVisible(false);
@@ -35,8 +37,8 @@ public class Display extends JPanel implements ActionListener {
 		
 		analysis = new Analysis(statDisplay, this);
 		analysis.setBounds(0, 0, 480, 480);
-		this.add(analysis);
 		analysis.setVisible(false);
+		this.add(analysis); //just changed
 		
 		
 		buttons = new JButton[8][8];
@@ -130,8 +132,10 @@ public class Display extends JPanel implements ActionListener {
 	boolean processing;
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
 		if(e.getActionCommand().equals("Analysis")) {
 			endScreen.setVisible(false);
+			statDisplay.analysis = analysis;
 			analysis.setVisible(true);
 			analysis.beginAnalysis(statDisplay.boardHistory);
 			return;
