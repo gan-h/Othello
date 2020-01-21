@@ -303,6 +303,7 @@ public class Stat_Display extends JPanel implements ActionListener{
 			} else { //if the user has exited settings, re-add all components to the model
 				Component[] components = this.getComponents();
 				for (int i=0; i < components.length; i++) {
+					if(components[i].equals(analysisEye)) continue;
 					components[i].setVisible(true);
 				}
 				for(Component x : settingComponents) {
