@@ -1,10 +1,10 @@
 <b>Othello Game with Minimax Computer Player and Slick GUI</b>
 
 How to run this program:
--Download latest master commit
--Go into the "Final Project" folder
--Compile all the .java files in the "project" folder. (javac project/*.java)
--Run "java project.Drawboard" (Be sure to be in the Final Project folder, not the "project" folder)
+- Download latest master commit
+- Go into the "Final Project" folder
+- Compile all the .java files in the "project" folder. (javac project/*.java)
+- Run "java project.Drawboard" (Be sure to be in the Final Project folder, not the "project" folder)
 
 <i>This program is JRE 1.7+ compatible</i>
 
