@@ -12,13 +12,16 @@ How to run this program:
 
 <b>--------------------------------------------------------------------------------------------------------------------------</b>
 
-To Do:
-- Add a analytics system to display W/L ratio.
-- Add an analysis system that shows board evaluations throughout the game after the user wins or loses against AI
-- Add random computer player
-- Add Jonalf Dyrland Weaver into the game
-- Add beta alpha pruning to the minimax algorithm.
+How to play:
+- By default, you are white, and the first player to move each game.
+  - Click a position on the board to make a move. 
+- The computer (black by default) will respond with a move of its own. The computer is based off on the minimax algorithm. If you feel like the computer is too hard to play against, you can lower its difficulty in the settings tab. (The settings tab is the little settings gear. Click it to toggle the settings menu)
 
+- When you finish your game against the computer (game ends when either player lacks a valid move to play), a popup will appear announcing the winner of the game. That popup will have an "Analyze?" button. Click the button if you would like to start a computer analysis of your game.
+  - If you decide to click analysis, you will be greeted with a graph with lots of tick marks. These tick marks represent each move you           made during the game. Bars/Squares on the graph will represent computer evaluations. There will be a leading red square as the computer analyzes the game. This square represents the current position the computer is looking at. Later, after the computer is finished evaluating, and the red square has stopped moving, you can use the arrow buttons (< >) to move the red square/bar through the graph. The evaluation score and move # of the red square/graph will be shown on the top of the analysis screen.
+  - When you click "Analyze?", an eye will appear on the top left of the program GUI. Click it to toggle between seeing the game, and seeing the analysis board.
+  
+  -After you are finished with one game, you can choose to start another by pressing "New Game".
 <b>--------------------------------------------------------------------------------------------------------------------------</b>
 
 
