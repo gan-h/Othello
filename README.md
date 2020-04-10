@@ -1,7 +1,13 @@
 <b>What is this?</b>
-- This is a program for the board game Othello. The program incorporates Othello's game logic, has a custom GUI for the game, and has a minimax computer player for users to play against. If you would like to play it, see below for installation instructions!
+- A program you can run if you would like to play the board game, Othello. This program features a GUI that I wrote using Swing, a java graphical interface library, and a minimax based computer player.
 
 Feel free to contribute or clone this project!
+
+<b> The Game Interface: </b>
+<img width="526" alt="githubOthello" src="https://user-images.githubusercontent.com/34823594/79027745-5cf4aa00-7b5b-11ea-96c3-c933699d1a67.PNG">
+
+<b> Analyzing the game after you're done with it </b>
+<img width="525" alt="githubImage2" src="https://user-images.githubusercontent.com/34823594/79027815-b361e880-7b5b-11ea-8d83-3814e702f7ba.PNG">
 
 <b>How to run the game:</b>
 
