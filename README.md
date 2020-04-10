@@ -1,6 +1,11 @@
-<b>Othello Game with Minimax Computer Player and Slick GUI</b>
+<b>What is this?</b>
+- This is a program for the board game Othello. It is ready to download to play. This program incorporates Othello's game logic, a custom GUI for the game, and a minimax computer player for users to play against.
 
-How to run this program:
+Feel free to contribute or clone this project!
+
+<b>How to run the game:</b>
+<i> You have two options: </i>
+
 - Download latest master commit
 - Go into the "Final Project" folder
 - Compile all the .java files in the "project" folder. (javac project/*.java)
