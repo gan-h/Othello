@@ -1,7 +1,7 @@
 <b>What is this?</b>
-- A program you can run if you would like to play the board game, Othello. This program features a GUI that I wrote using Swing, a java graphical interface library, and a minimax based computer player.
+- This is a source code repository for one of my latest projects: a program you can use to play the board game, Othello. This program features a GUI that I wrote using the Swing library, and a minimax-based computer player.
 
-Feel free to contribute or clone this project!
+Feel free to contribute or clone this project! Below you'll find some screenshots of the program, and instructions on how to run it.
 
 <b> The Game Interface: </b>
 
