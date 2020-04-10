@@ -4,7 +4,6 @@
 Feel free to contribute or clone this project!
 
 <b>How to run the game:</b>
-<i> You have two options: </i>
 
 - Download latest master commit
 - Go into the "Final Project" folder
