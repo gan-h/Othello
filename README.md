@@ -4,9 +4,11 @@
 Feel free to contribute or clone this project!
 
 <b> The Game Interface: </b>
+
 <img width="526" alt="githubOthello" src="https://user-images.githubusercontent.com/34823594/79027745-5cf4aa00-7b5b-11ea-96c3-c933699d1a67.PNG">
 
 <b> Analyzing the game after you're done with it </b>
+
 <img width="525" alt="githubImage2" src="https://user-images.githubusercontent.com/34823594/79027815-b361e880-7b5b-11ea-8d83-3814e702f7ba.PNG">
 
 <b>How to run the game:</b>
