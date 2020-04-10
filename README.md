@@ -1,5 +1,5 @@
 <b>What is this?</b>
-- This is a program for the board game Othello. It is ready to download to play. This program incorporates Othello's game logic, a custom GUI for the game, and a minimax computer player for users to play against.
+- This is a program for the board game Othello. The program incorporates Othello's game logic, has a custom GUI for the game, and has a minimax computer player for users to play against. If you would like to play it, see below for installation instructions!
 
 Feel free to contribute or clone this project!
 
